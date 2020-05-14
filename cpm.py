@@ -8,30 +8,37 @@ class wip:
         self.backward = False
 
     def early_sf(self):
-        if not self.forward:
-            if not self.dependencies:
-                self.ES = 0
-            else:
-                prev_ef = max(self.dependencies, key=lambda ef: ef.EF)
-                self.ES = prev_ef.EF
+        if not self.dependencies:
+            self.ES = 0
+        else:
+            prev_ef = max(self.dependencies, key=lambda ef: ef.EF)
+            self.ES = prev_ef.EF
 
-            self.EF = self.ES + self.duration
-            self.forward = True
+        self.EF = self.ES + self.duration
+        self.forward = True
         
     def late_sf(self):
-        if not self.backward:
-            if not self.dependents:
-                self.LF = self.EF
-            else:
-                prev_ls = min(self.dependents, key=lambda ls: ls.LS)
-                self.LF = prev_ls.LS
+        if not self.dependents:
+            self.LF = self.EF
+        else:
+            prev_ls = min(self.dependents, key=lambda ls: ls.LS)
+            self.LF = prev_ls.LS
 
-            self.LS = self.LF - self.duration
-            self.TF = self.LS - self.ES
-            self.backward = True
+        self.LS = self.LF - self.duration
+        self.TF = self.LS - self.ES
+        self.backward = True
     
     def __str__(self):
-        return "{:<4}{:<5}{:<5}{:<5}\n{:<4}{:<5}{:<5}{:<5}\n{}".format(self.name, self.ES, self.duration, self.EF, " ",self.LS, self.TF, self.LF, "="*20)
+        activity = "{:<4}{:<5}{:<5}{:<5}\n{:<4}{:<5}{:<5}{:<5}\n{}".format(self.name,
+                        self.ES,
+                        self.duration,
+                        self.EF,
+                        " ",
+                        self.LS,
+                        self.TF,
+                        self.LF,
+                        "="*20)
+        return activity
 
 
 def main():
