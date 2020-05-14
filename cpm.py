@@ -26,10 +26,20 @@ class wip:
 
         self.LS = self.LF - self.duration
         self.TF = self.LS - self.ES
+        self.free_float()
         self.backward = True
     
+    def free_float(self):
+        self.FF = 0
+        if self.dependents:
+            ES_next = min(self.dependents, key=lambda ff: ff.FF)
+            ES_next = ES_next.ES
+        else:
+            ES_next = self.EF
+        self.FF = ES_next - self.EF
+    
     def __str__(self):
-        activity = "{:<4}{:<5}{:<5}{:<5}\n{:<4}{:<5}{:<5}{:<5}\n{}".format(self.name,
+        activity = "{:<4}{:<5}{:<5}{:<5}\n{:<4}{:<5}{:<5}{:<5}\nFF {}\n{}".format(self.name,
                         self.ES,
                         self.duration,
                         self.EF,
@@ -37,6 +47,7 @@ class wip:
                         self.LS,
                         self.TF,
                         self.LF,
+                        self.FF,
                         "="*20)
         return activity
 
