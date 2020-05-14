@@ -12,34 +12,26 @@ class wip:
             if not self.dependencies:
                 self.ES = 0
             else:
-                try:
-                    prev_ef = max(self.dependencies, key=lambda ef: ef.EF)
-                    self.ES = prev_ef.EF
-                except:
-                    return 1
+                prev_ef = max(self.dependencies, key=lambda ef: ef.EF)
+                self.ES = prev_ef.EF
 
             self.EF = self.ES + self.duration
             self.forward = True
-            print(self.name, self.ES, self.duration, self.EF)
         
     def late_sf(self):
         if not self.backward:
-            print(self.name)
             if not self.dependents:
                 self.LF = self.EF
             else:
-                try:
-                    prev_ls = min(self.dependents, key=lambda ls: ls.LS)
-                    self.LF = prev_ls.LS
-                except:
-                    return 1
+                prev_ls = min(self.dependents, key=lambda ls: ls.LS)
+                self.LF = prev_ls.LS
 
             self.LS = self.LF - self.duration
             self.TF = self.LS - self.ES
             self.backward = True
     
     def __str__(self):
-        return self.name
+        return "{:<4}{:<5}{:<5}{:<5}\n{:<4}{:<5}{:<5}{:<5}\n{}".format(self.name, self.ES, self.duration, self.EF, " ",self.LS, self.TF, self.LF, "="*20)
 
 
 def main():
@@ -74,10 +66,8 @@ def main():
 
     forward_pass(S)
     backward_pass(Fin)
-
     for c in [A,B,C,D,E,F,G,H,I,J,K]:
-        print(c.name, c.ES, c.duration, c.EF)
-        print(" ", c.LS, c.TF, c.LF)
+        print(c)
     
     CPM = critical_path(S, [])
     print([activity.name for activity in CPM])
@@ -90,9 +80,9 @@ def forward_pass(S):
     while queue:
         v = queue.pop(0)
         for c in v.dependents:
-            if not c.forward:
-                if not c.early_sf():
-                    queue.append(c)
+            if not c.forward and all(b.forward for b in c.dependencies):
+                c.early_sf()
+                queue.append(c)
 
 def backward_pass(S):
     queue = [S]
